@@ -1,0 +1,109 @@
+name: CiLens Backend CI
+
+on:
+  push:
+    branches: ['main']
+  pull_request:
+    branches: ['main']
+
+jobs:
+  # Job for linting the code
+  lint:
+    name: Lint Code
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository # Step: Checks out your repository code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js # Step: Sets up Node.js environment on the runner
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.x'
+          cache: 'npm' # Caches npm dependencies to speed up subsequent runs
+
+      - name: Install Dependencies # Step: Installs project dependencies
+        run: npm ci # 'npm ci' (Clean Install) is preferred for CI/CD over 'npm install'
+
+      - name: Run Linter # Step: Runs the linter
+        run: npm run lint
+
+  # Job for building the project
+  build:
+    name: Build Project
+    runs-on: ubuntu-latest
+    needs: lint # This job depends on the successful completion of the 'lint' job
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.x'
+          cache: 'npm'
+
+      - name: Install Dependencies
+        run: npm ci
+
+      - name: Build Project # Step: Builds the project
+        run: npm run build # Executes the build script defined in package.json
+
+      - name: Upload Build Artifact # Step: Uploads the compiled artifact (the 'dist/' folder)
+        uses: actions/upload-artifact@v4
+        if: success() # Uploads only if the build step was successful
+        with:
+          name: cilens-backend-build # Name of the artifact
+          path: dist/ # Path to the folder containing the compiled code
+
+  # Job for running unit tests
+  test-unit:
+    name: Run Unit Tests
+    runs-on: ubuntu-latest
+    needs: [lint] # Unit tests typically don't require the build artifact and can run in parallel with 'build'
+    strategy:
+      matrix:
+        node-version: [18.x, 20.x, 22.x] # Tests on multiple Node.js versions
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }} # Uses the current Node.js version from the matrix
+          cache: 'npm'
+
+      - name: Install Dependencies
+        run: npm ci
+
+      - name: Run Unit Tests # Step: Runs the unit tests
+        run: npm run test # Executes the test script defined in package.json (for unit tests)
+
+  # Job for running E2E tests
+  test-e2e:
+    name: Run E2E Tests
+    runs-on: ubuntu-latest
+    needs: [build] # E2E tests typically require a previously built artifact
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js # You can specify a specific Node.js version for E2E tests
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.x'
+          cache: 'npm'
+
+      - name: Install Dependencies # Installs dependencies needed for E2E test execution
+        run: npm ci
+
+      - name: Download Build Artifact # Step: Downloads the previously built artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: cilens-backend-build
+          path: dist/ # Places the artifact into the dist/ folder
+
+      - name: Run E2E Tests # Step: Runs the E2E tests
+        # Important: Your 'npm run test:e2e' script should be capable of starting the NestJS application
+        # from the 'dist/' folder and then executing the E2E tests against it.
+        run: npm run test:e2e
