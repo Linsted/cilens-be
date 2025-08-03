@@ -3,7 +3,6 @@ import { User } from 'src/core/domain/user/user.entity';
 import { IUserRepository } from 'src/core/ports/out/user.repository.port';
 import { UserOrmEntity } from '../entities/user.orm-entity';
 import { Repository } from 'typeorm';
-import { InternalServerErrorException } from '@nestjs/common';
 
 export class UserRepository implements IUserRepository {
   constructor(
@@ -20,10 +19,6 @@ export class UserRepository implements IUserRepository {
     const userOrmEntity = UserOrmEntity.fromDomain(user);
 
     const savedUser = await this.ormRepo.save(userOrmEntity);
-
-    if (!savedUser) {
-      throw new InternalServerErrorException('User not saved in DB');
-    }
 
     return savedUser.toDomain();
   }

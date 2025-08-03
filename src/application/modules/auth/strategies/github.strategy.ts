@@ -5,6 +5,7 @@ import {
   AUTH_SERVICE_PORT,
   IAuthService,
 } from 'src/core/ports/in/auth.service.port';
+import { User } from 'src/core/domain/user/user.entity';
 
 @Injectable()
 export class GithubStrategy extends PassportStrategy(Strategy, 'github') {
@@ -24,7 +25,7 @@ export class GithubStrategy extends PassportStrategy(Strategy, 'github') {
     accessToken: string,
     _refreshToken: string,
     profile: any,
-  ): Promise<any> {
+  ): Promise<User> {
     const { id, username } = profile;
     return await this.authService.validateUserFromGithub(
       id as string,

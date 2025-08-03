@@ -1,1 +1,1 @@
-run migraion - npm run migration:generate src/infrastructure/db/orm/migrations/${AddMigrationName}
+run migration - npm run migration:generate src/infrastructure/db/orm/migrations/${AddMigrationName}

@@ -25,5 +25,5 @@ volumes:
   postgres_data:
 
 networks:
-  cilens_network: # Оголошуємо кастомну мережу
+  cilens_network: #Declare custom network
     driver: bridge
