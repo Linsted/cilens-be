@@ -14,9 +14,9 @@ export class GithubStrategy extends PassportStrategy(Strategy, 'github') {
     private readonly authService: IAuthService,
   ) {
     super({
-      clientID: process.env.GITHUB_CLIENT_ID,
-      clientSecret: process.env.GITHUB_CLIENT_SECRET,
-      callbackURL: process.env.GITHUB_CALLBACK_URL,
+      clientID: process.env.S_GITHUB_CLIENT_ID,
+      clientSecret: process.env.S_GITHUB_CLIENT_SECRET,
+      callbackURL: process.env.S_GITHUB_CALLBACK_URL,
       scope: ['user:email'],
     });
   }

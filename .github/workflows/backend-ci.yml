@@ -108,6 +108,9 @@ jobs:
       DB_USER: ${{secrets.DB_USER}}
       DB_PASSWORD: ${{secrets.DB_PASSWORD}}
       DB_NAME: ${{secrets.DB_NAME}}_e2e
+      S_GITHUB_CLIENT_ID: ${{ secrets.S_GITHUB_CLIENT_ID }}
+      S_GITHUB_CLIENT_SECRET: ${{ secrets.S_GITHUB_CLIENT_SECRET }}
+      S_GITHUB_CALLBACK_URL: ${{ secrets.S_GITHUB_CALLBACK_URL }}
 
     steps:
       - name: Checkout Repository
