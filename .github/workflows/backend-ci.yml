@@ -89,9 +89,9 @@ jobs:
       postgres:
         image: postgres:15
         env:
-          POSTGRES_USER: ${secrets.DB_USER}
-          POSTGRES_PASSWORD: ${secrets.DB_PASSWORD}
-          POSTGRES_DB: ${secrets.DB_NAME}_e2e # We use a different database for tests so that there are no conflicts
+          POSTGRES_USER: ${{secrets.DB_USER}}
+          POSTGRES_PASSWORD: ${{secrets.DB_PASSWORD}}
+          POSTGRES_DB: ${{secrets.DB_NAME}}_e2e # We use a different database for tests so that there are no conflicts
         ports:
           - 5432:5432 # DB port mapping
         # Health check options to prevent NestJS from connecting until the DB is ready
@@ -105,9 +105,9 @@ jobs:
     env:
       DB_HOST: localhost # Host for the service is 'localhost', as they are on the same network
       DB_PORT: 5432 # Service port
-      DB_USER: ${secrets.DB_USER}
-      DB_PASSWORD: ${secrets.DB_PASSWORD}
-      DB_NAME: ${secrets.DB_NAME}_e2e
+      DB_USER: ${{secrets.DB_USER}}
+      DB_PASSWORD: ${{secrets.DB_PASSWORD}}
+      DB_NAME: ${{secrets.DB_NAME}}_e2e
 
     steps:
       - name: Checkout Repository
