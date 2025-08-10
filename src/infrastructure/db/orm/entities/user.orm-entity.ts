@@ -1,6 +1,7 @@
 import { Entity, PrimaryGeneratedColumn, Column, Index } from 'typeorm';
 
 import { User as DomainUser } from 'src/core/domain/user/user.entity';
+import { EncryptedPackage } from 'src/core/ports/out/encryption.port';
 
 @Entity({ name: 'users' })
 export class UserOrmEntity {
@@ -14,15 +15,15 @@ export class UserOrmEntity {
   @Column({ type: 'varchar', length: 255 })
   username: string;
 
-  @Column({ type: 'varchar', length: 500 })
-  accessToken: string;
+  @Column('jsonb')
+  accessTokenEncrypted: EncryptedPackage;
 
   toDomain(): DomainUser {
     return new DomainUser(
       this.id,
       this.githubId,
       this.username,
-      this.accessToken,
+      this.accessTokenEncrypted,
     );
   }
 
@@ -31,7 +32,7 @@ export class UserOrmEntity {
     entity.id = user.id;
     entity.githubId = user.githubId;
     entity.username = user.username;
-    entity.accessToken = user.accessToken;
+    entity.accessTokenEncrypted = user.accessToken;
 
     return entity;
   }

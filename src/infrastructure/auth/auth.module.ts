@@ -9,6 +9,8 @@ import { AuthService } from '../../application/modules/auth/auth.service';
 import { GithubStrategy } from '../../application/modules/auth/strategies/github.strategy';
 import { UserOrmEntity } from '../db/orm/entities/user.orm-entity';
 import { UserRepository } from '../db/orm/repositories/user.repository';
+import { ENCRYPTION_PORT } from 'src/core/ports/out/encryption.port';
+import { EncryptionService } from '../common/encription/encription.service';
 
 @Module({
   imports: [
@@ -32,7 +34,11 @@ import { UserRepository } from '../db/orm/repositories/user.repository';
       useClass: UserRepository,
     },
     GithubStrategy,
+    {
+      provide: ENCRYPTION_PORT,
+      useClass: EncryptionService,
+    },
   ],
-  exports: [AUTH_SERVICE_PORT, USER_REPOSITORY_PORT],
+  exports: [AUTH_SERVICE_PORT, USER_REPOSITORY_PORT, ENCRYPTION_PORT],
 })
 export class AuthModule {}
