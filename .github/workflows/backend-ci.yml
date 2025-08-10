@@ -84,25 +84,49 @@ jobs:
     name: Run E2E Tests
     runs-on: ubuntu-latest
     needs: [build] # E2E tests typically require a previously built artifact
+
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_USER: ${{secrets.DB_USER}}
+          POSTGRES_PASSWORD: ${{secrets.DB_PASSWORD}}
+          POSTGRES_DB: ${{secrets.DB_NAME}}_e2e # We use a different database for tests so that there are no conflicts
+        ports:
+          - 5432:5432 # DB port mapping
+        # Health check options to prevent NestJS from connecting until the DB is ready
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    # Environment variables for the NestJS application in this job
+    env:
+      DB_HOST: localhost # Host for the service is 'localhost', as they are on the same network
+      DB_PORT: 5432 # Service port
+      DB_USER: ${{secrets.DB_USER}}
+      DB_PASSWORD: ${{secrets.DB_PASSWORD}}
+      DB_NAME: ${{secrets.DB_NAME}}_e2e
+      S_GITHUB_CLIENT_ID: ${{ secrets.S_GITHUB_CLIENT_ID }}
+      S_GITHUB_CLIENT_SECRET: ${{ secrets.S_GITHUB_CLIENT_SECRET }}
+      S_GITHUB_CALLBACK_URL: ${{ secrets.S_GITHUB_CALLBACK_URL }}
+
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
-
       - name: Setup Node.js # You can specify a specific Node.js version for E2E tests
         uses: actions/setup-node@v4
         with:
           node-version: '20.x'
           cache: 'npm'
-
       - name: Install Dependencies # Installs dependencies needed for E2E test execution
         run: npm ci
-
       - name: Download Build Artifact # Step: Downloads the previously built artifact
         uses: actions/download-artifact@v4
         with:
           name: cilens-backend-build
           path: dist/ # Places the artifact into the dist/ folder
-
       - name: Run E2E Tests # Step: Runs the E2E tests
         # Important: Your 'npm run test:e2e' script should be capable of starting the NestJS application
         # from the 'dist/' folder and then executing the E2E tests against it.
