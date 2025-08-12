@@ -29,7 +29,7 @@ export class JwtGuard implements CanActivate {
         secret: this.configService.get('JWT_SECRET'),
       });
 
-      request['user'] = payload as Omit<User, 'accessToken'>;
+      request.user = payload as Omit<User, 'accessToken'>;
     } catch {
       throw new UnauthorizedException();
     }

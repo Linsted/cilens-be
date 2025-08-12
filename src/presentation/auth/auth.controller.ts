@@ -47,7 +47,7 @@ export class AuthController {
   @Get('test')
   @UseGuards(JwtGuard)
   testEndpoint(@Req() req: Request) {
-    const user = req['user'];
+    const user = req.user;
     if (!user) {
       throw new BadRequestException('User not found in request');
     }
