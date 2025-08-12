@@ -50,6 +50,10 @@ export class AuthService implements IAuthService {
   }
 
   generateJwt(user: User): string {
-    return this.jwtService.sign({ sub: user.id, username: user.username });
+    return this.jwtService.sign({
+      id: user.id,
+      username: user.username,
+      githubId: user.githubId,
+    });
   }
 }

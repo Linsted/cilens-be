@@ -12,6 +12,8 @@ import {
 } from '../../core/ports/in/auth.service.port';
 import { Inject } from '@nestjs/common';
 import { Request } from 'express';
+import { JwtGuard } from 'src/common/guards/jwt-auth.guard';
+import { User } from 'src/core/domain/user/user.entity';
 
 @Controller('auth')
 export class AuthController {
@@ -29,7 +31,7 @@ export class AuthController {
   @Get('github/callback')
   @UseGuards(AuthGuard('github'))
   githubCallback(@Req() req: Request) {
-    const user = req.user;
+    const user = req.user as User;
     if (!user) {
       throw new BadRequestException(
         'User not found after GitHub authentication',
@@ -39,5 +41,17 @@ export class AuthController {
     const token = this.authService.generateJwt(user);
 
     return { token };
+  }
+
+  // TODO Delete this endpoint after testing
+  @Get('test')
+  @UseGuards(JwtGuard)
+  testEndpoint(@Req() req: Request) {
+    const user = req.user;
+    if (!user) {
+      throw new BadRequestException('User not found in request');
+    }
+
+    return { message: 'This is a protected route', user };
   }
 }

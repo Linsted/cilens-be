@@ -39,6 +39,11 @@ import { EncryptionService } from '../common/encription/encription.service';
       useClass: EncryptionService,
     },
   ],
-  exports: [AUTH_SERVICE_PORT, USER_REPOSITORY_PORT, ENCRYPTION_PORT],
+  exports: [
+    AUTH_SERVICE_PORT,
+    USER_REPOSITORY_PORT,
+    ENCRYPTION_PORT,
+    JwtModule,
+  ],
 })
 export class AuthModule {}
