@@ -5,6 +5,6 @@ export class User {
     public id: string,
     public githubId: string,
     public username: string,
-    public accessToken: EncryptedPackage,
+    public accessToken: string | EncryptedPackage,
   ) {}
 }

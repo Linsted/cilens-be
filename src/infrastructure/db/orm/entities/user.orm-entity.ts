@@ -32,7 +32,8 @@ export class UserOrmEntity {
     entity.id = user.id;
     entity.githubId = user.githubId;
     entity.username = user.username;
-    entity.accessTokenEncrypted = user.accessToken;
+    if (typeof user.accessToken !== 'string')
+      entity.accessTokenEncrypted = user.accessToken;
 
     return entity;
   }
